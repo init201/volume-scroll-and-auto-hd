@@ -1,0 +1,36 @@
+{
+  "name": "volume-scroll-and-auto-hd",
+  "private": true,
+  "description": "Control YouTube volume with your mouse wheel and play every video in your preferred quality automatically.",
+  "license": "MIT",
+  "homepage": "https://github.com/init201/volume-scroll-and-auto-hd",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/init201/volume-scroll-and-auto-hd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/init201/volume-scroll-and-auto-hd/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "lint": "npx --yes web-ext@10 lint",
+    "test": "npm run lint && npm run check",
+    "build": "npx --yes web-ext@10 build --overwrite-dest",
+    "release": "node scripts/release.mjs",
+    "start:firefox": "npx --yes web-ext@10 run --start-url https://www.youtube.com"
+  },
+  "webExt": {
+    "ignoreFiles": [
+      "scripts",
+      "store",
+      "docs",
+      "v[0-9]*",
+      "*.md",
+      "package.json",
+      "package-lock.json"
+    ]
+  }
+}

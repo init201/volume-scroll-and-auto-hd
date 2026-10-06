@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Store assets</title>
+    <style>
+      :root {
+        --bg: #0d0e11;
+        --surface: #18191c;
+        --surface-raised: #2a2b30;
+        --text: #f2f2f4;
+        --text-secondary: #a3a5ac;
+        --text-muted: #6f7178;
+        --accent: #e0294d;
+        --boost: #ff4d63;
+        --font: "Segoe UI Variable Display", "Segoe UI", Roboto, system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .asset {
+        display: none;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(900px 600px at 85% 20%, rgba(224, 41, 77, 0.1), transparent 60%),
+          var(--bg);
+      }
+
+      .asset.is-active {
+        display: block;
+      }
+
+      .screenshot {
+        width: 1280px;
+        height: 800px;
+      }
+
+      .brand {
+        position: absolute;
+        top: 56px;
+        left: 80px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text-secondary);
+        font-size: 17px;
+        font-weight: 500;
+      }
+
+      .brand img {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+      }
+
+      .copy {
+        position: absolute;
+        top: 50%;
+        left: 80px;
+        width: 440px;
+        transform: translateY(-50%);
+      }
+
+      .eyebrow {
+        margin: 0 0 18px;
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 54px;
+        font-weight: 600;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+
+      .lead {
+        margin: 22px 0 0;
+        color: var(--text-secondary);
+        font-size: 20px;
+        line-height: 1.55;
+        text-wrap: pretty;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 32px;
+      }
+
+      .chip {
+        padding: 9px 14px;
+        border: 1px solid #26272c;
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      .segmented {
+        display: inline-flex;
+        gap: 4px;
+        margin-top: 34px;
+        padding: 5px;
+        border-radius: 12px;
+        background: var(--surface);
+      }
+
+      .segmented span {
+        min-width: 86px;
+        padding: 10px 0;
+        border-radius: 9px;
+        color: var(--text-secondary);
+        font-size: 17px;
+        text-align: center;
+      }
+
+      .segmented .is-selected {
+        background: var(--surface-raised);
+        color: var(--text);
+      }
+
+      .player {
+        position: absolute;
+        top: 50%;
+        right: 80px;
+        width: 640px;
+        height: 360px;
+        overflow: hidden;
+        border-radius: 16px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        transform: translateY(-50%);
+      }
+
+      .sky {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, #1d2547 0%, #463868 36%, #b95d6c 60%, #eb9f66 80%, #f5c58a 100%);
+      }
+
+      .sun {
+        position: absolute;
+        top: 47%;
+        left: 60%;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: #ffe3b3;
+        box-shadow: 0 0 90px 36px rgba(255, 196, 140, 0.45);
+      }
+
+      .ridge {
+        position: absolute;
+        inset: 0;
+      }
+
+      .ridge-far {
+        background: #3b2f56;
+        clip-path: polygon(0 62%, 12% 50%, 22% 58%, 35% 41%, 48% 56%, 60% 47%, 74% 60%, 86% 48%, 100% 57%, 100% 100%, 0 100%);
+      }
+
+      .ridge-mid {
+        background: #261f3d;
+        clip-path: polygon(0 73%, 10% 64%, 24% 75%, 38% 60%, 52% 71%, 66% 62%, 80% 74%, 92% 66%, 100% 71%, 100% 100%, 0 100%);
+      }
+
+      .ridge-near {
+        background: #14111e;
+        clip-path: polygon(0 85%, 15% 78%, 30% 87%, 46% 79%, 63% 88%, 78% 80%, 100% 86%, 100% 100%, 0 100%);
+      }
+
+      .controls {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 96px;
+        padding: 0 22px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+      }
+
+      .progress {
+        position: absolute;
+        right: 22px;
+        bottom: 46px;
+        left: 22px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.28);
+      }
+
+      .progress::before {
+        content: "";
+        position: absolute;
+        inset: 0 62% 0 0;
+        border-radius: 2px;
+        background: #fff;
+      }
+
+      .progress::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: 38%;
+        width: 12px;
+        height: 12px;
+        margin-left: -6px;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .bar {
+        position: absolute;
+        right: 22px;
+        bottom: 14px;
+        left: 22px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        color: #fff;
+        font-size: 14px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .bar svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: #fff;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .bar .spacer {
+        flex: 1;
+      }
+
+      .indicator {
+        position: absolute;
+        top: 26px;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px 7px 10px;
+        border-radius: 999px;
+        background: rgba(15, 15, 17, 0.78);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        transform: translateX(-50%) scale(1.7);
+        transform-origin: top center;
+      }
+
+      .indicator.is-boosted {
+        color: var(--boost);
+      }
+
+      .indicator svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .indicator .track {
+        position: relative;
+        width: 84px;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      .indicator .fill,
+      .indicator .extra {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+      }
+
+      .indicator .fill {
+        left: 0;
+        background: #fff;
+      }
+
+      .indicator .extra {
+        background: var(--boost);
+      }
+
+      .indicator .value {
+        min-width: 36px;
+        text-align: right;
+      }
+
+      .cursor {
+        position: absolute;
+        top: 54%;
+        left: 50%;
+        width: 26px;
+        height: 34px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+      }
+
+      .wheel-hint {
+        position: absolute;
+        top: calc(54% + 22px);
+        left: calc(50% + 30px);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px 10px 12px;
+        border-radius: 999px;
+        background: rgba(15, 15, 17, 0.82);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .wheel-hint svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      .popup-frame {
+        position: absolute;
+        top: 50%;
+        right: 150px;
+        width: 340px;
+        border: 0;
+        border-radius: 12px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.07);
+        transform: translateY(-50%) scale(1.18);
+        transform-origin: center right;
+      }
+
+      .fallback {
+        display: grid;
+        gap: 10px;
+        margin-top: 34px;
+      }
+
+      .fallback div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border: 1px solid #26272c;
+        border-radius: 12px;
+        background: var(--surface);
+        font-size: 17px;
+      }
+
+      .fallback span {
+        color: var(--text-secondary);
+      }
+
+      .fallback strong {
+        font-weight: 600;
+      }
+
+      .fallback .is-result {
+        border-color: rgba(224, 41, 77, 0.55);
+        background: rgba(224, 41, 77, 0.1);
+      }
+
+      .fallback .is-result strong {
+        color: #ff6b82;
+      }
+
+      .tile {
+        width: 440px;
+        height: 280px;
+        background:
+          radial-gradient(360px 260px at 100% 0%, rgba(224, 41, 77, 0.2), transparent 70%),
+          var(--bg);
+      }
+
+      .tile-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 36px;
+      }
+
+      .tile-content img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+      }
+
+      .tile-content h2 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 1.12;
+        letter-spacing: -0.01em;
+      }
+
+      .tile-content p {
+        margin: 12px 0 0;
+        color: var(--text-secondary);
+        font-size: 16px;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <template id="player-template">
+      <div class="player">
+        <div class="sky"></div>
+        <div class="sun"></div>
+        <div class="ridge ridge-far"></div>
+        <div class="ridge ridge-mid"></div>
+        <div class="ridge ridge-near"></div>
+        <div class="controls">
+          <div class="progress"></div>
+          <div class="bar">
+            <svg viewBox="0 0 24 24"><path d="M7 5v14l11-7z" /></svg>
+            <svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" /><path d="M15.5 9a4 4 0 0 1 0 6" /></svg>
+            <span>4:12 / 12:48</span>
+            <span class="spacer"></span>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" /></svg>
+            <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+          </div>
+        </div>
+        <div class="indicator">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" />
+            <path d="M15.5 9a4 4 0 0 1 0 6" />
+            <path d="M18 6a8.5 8.5 0 0 1 0 12" />
+          </svg>
+          <div class="track"><div class="fill"></div><div class="extra"></div></div>
+          <span class="value"></span>
+        </div>
+        <svg class="cursor" viewBox="0 0 26 34">
+          <path d="M2 2v25l6.5-6.2 4.3 10 4.4-1.9-4.2-9.8H22z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round" />
+        </svg>
+        <div class="wheel-hint">
+          <svg viewBox="0 0 34 34">
+            <rect x="9" y="4" width="16" height="26" rx="8" fill="none" stroke="#fff" stroke-width="2" />
+            <path d="M9 14h16" stroke="#fff" stroke-width="1.5" opacity="0.5" />
+            <rect x="15.5" y="7.5" width="3" height="7" rx="1.5" fill="#e0294d" />
+          </svg>
+          <span>Scroll</span>
+        </div>
+      </div>
+    </template>
+
+    <section class="asset screenshot" data-asset="volume">
+      <div class="brand"><img src="../icons/icon48.png" alt="" />Volume Scroll and Auto HD</div>
+      <div class="copy">
+        <p class="eyebrow">Volume</p>
+        <h1>Scroll to set the volume</h1>
+        <p class="lead">Hover over a video and turn your mouse wheel. Works on videos, Shorts, YouTube Music and embedded players.</p>
+        <div class="chips">
+          <span class="chip">1 to 20% per step</span>
+          <span class="chip">Fine steps below 10%</span>
+          <span class="chip">Middle click to mute</span>
+        </div>
+      </div>
+      <div class="slot" data-level="65"></div>
+    </section>
+
+    <section class="asset screenshot" data-asset="boost">
+      <div class="brand"><img src="../icons/icon48.png" alt="" />Volume Scroll and Auto HD</div>
+      <div class="copy">
+        <p class="eyebrow">Volume boost</p>
+        <h1>Make quiet videos louder</h1>
+        <p class="lead">Go beyond 100% when a video is too quiet. Anything above 100% turns red, so you always know.</p>
+        <div class="segmented">
+          <span>Off</span>
+          <span>150%</span>
+          <span class="is-selected">200%</span>
+          <span>300%</span>
+        </div>
+      </div>
+      <div class="slot" data-level="160" data-max="200"></div>
+    </section>
+
+    <section class="asset screenshot" data-asset="quality">
+      <div class="brand"><img src="../icons/icon48.png" alt="" />Volume Scroll and Auto HD</div>
+      <div class="copy">
+        <p class="eyebrow">Auto quality</p>
+        <h1>Your quality, every time</h1>
+        <p class="lead">Pick 360p up to 4K or the highest available. Every video starts in it automatically.</p>
+        <div class="fallback">
+          <div><span>You prefer</span><strong>2160p (4K)</strong></div>
+          <div><span>The video offers</span><strong>1080p, 720p, 480p</strong></div>
+          <div class="is-result"><span>It plays in</span><strong>1080p</strong></div>
+        </div>
+      </div>
+      <iframe class="popup-frame" title="Settings popup" src="../src/popup/popup.html" scrolling="no"></iframe>
+    </section>
+
+    <section class="asset tile" data-asset="tile">
+      <div class="tile-content">
+        <img src="../icons/icon128.png" alt="" />
+        <h2>Volume Scroll<br />and Auto HD</h2>
+        <p>Mouse wheel volume and auto quality<br />for YouTube</p>
+      </div>
+    </section>
+
+    <script>
+      const ready = () => {
+        document.body.dataset.ready = 'true';
+      };
+
+      const fillPlayer = (slot) => {
+        const level = Number(slot.dataset.level);
+        const scale = Number(slot.dataset.max ?? 100);
+        const player = document.getElementById('player-template').content.firstElementChild.cloneNode(true);
+        const base = Math.min(level, 100);
+        player.querySelector('.fill').style.width = `${(base / scale) * 100}%`;
+        player.querySelector('.extra').style.left = `${(base / scale) * 100}%`;
+        player.querySelector('.extra').style.width = `${(Math.max(level - 100, 0) / scale) * 100}%`;
+        player.querySelector('.value').textContent = `${level}%`;
+        player.querySelector('.indicator').classList.toggle('is-boosted', level > 100);
+        slot.replaceWith(player);
+      };
+
+      const preparePopup = async (frame) => {
+        const manifest = await fetch('../manifest.json').then((response) => response.json());
+        await new Promise((resolve) => {
+          if (frame.contentDocument?.readyState === 'complete') resolve();
+          else frame.addEventListener('load', resolve, { once: true });
+        });
+        const popup = frame.contentDocument;
+        popup.querySelectorAll('.tick')[5].click();
+        popup.getElementById('version').textContent = `v${manifest.version}`;
+        const source = popup.getElementById('source');
+        source.hidden = false;
+        source.href = manifest.homepage_url;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        frame.style.height = `${popup.documentElement.scrollHeight}px`;
+      };
+
+      const show = async () => {
+        const name = new URLSearchParams(location.search).get('asset') ?? 'volume';
+        const asset = document.querySelector(`[data-asset="${name}"]`);
+        asset.classList.add('is-active');
+        asset.querySelectorAll('.slot').forEach(fillPlayer);
+        const frame = asset.querySelector('.popup-frame');
+        if (frame) await preparePopup(frame);
+        await document.fonts.ready;
+        await Promise.all([...document.images].map((image) => image.decode().catch(() => {})));
+        ready();
+      };
+
+      show();
+    </script>
+  </body>
+</html>

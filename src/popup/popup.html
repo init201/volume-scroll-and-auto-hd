@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Volume Scroll and Auto HD</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="is-loading">
+    <header class="header">
+      <div class="brand">
+        <img class="brand-icon" src="../../icons/icon32.png" width="20" height="20" alt="" />
+        <span class="brand-name">Volume Scroll and Auto HD</span>
+      </div>
+      <span class="switch">
+        <input type="checkbox" data-setting="enabled" aria-label="Enable extension" />
+        <span class="switch-track"></span>
+      </span>
+    </header>
+
+    <main class="content" data-depends="enabled">
+      <section class="section" aria-labelledby="volume-title">
+        <h2 class="section-title" id="volume-title">Volume</h2>
+
+        <label class="row">
+          <span class="row-label">Scroll to adjust volume</span>
+          <span class="switch">
+            <input type="checkbox" data-setting="wheel" />
+            <span class="switch-track"></span>
+          </span>
+        </label>
+
+        <div data-depends="wheel">
+          <div class="row">
+            <label class="row-label" for="step">Step size</label>
+            <div class="inline-slider">
+              <input class="slider" id="step" type="range" min="1" max="20" step="1" data-setting="step" />
+              <output class="field-value" id="step-value" for="step"></output>
+            </div>
+          </div>
+
+          <label class="row">
+            <span class="row-label">Fine steps below 10%</span>
+            <span class="switch">
+              <input type="checkbox" data-setting="fine" />
+              <span class="switch-track"></span>
+            </span>
+          </label>
+
+          <div class="row">
+            <span class="row-label" id="modifier-label">Activation</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="modifier-label">
+              <label><input type="radio" name="modifier" value="none" /><span>Always</span></label>
+              <label><input type="radio" name="modifier" value="shift" /><span>Shift</span></label>
+              <label><input type="radio" name="modifier" value="right" /><span>Right click</span></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <span class="row-label" id="boost-label">Volume boost</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="boost-label">
+              <label><input type="radio" name="maxVolume" value="100" /><span>Off</span></label>
+              <label><input type="radio" name="maxVolume" value="150" /><span>150%</span></label>
+              <label><input type="radio" name="maxVolume" value="200" /><span>200%</span></label>
+              <label><input type="radio" name="maxVolume" value="300" /><span>300%</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="row-label" id="indicator-label">Indicator</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="indicator-label">
+            <label><input type="radio" name="indicator" value="top" /><span>Top</span></label>
+            <label><input type="radio" name="indicator" value="center" /><span>Center</span></label>
+            <label><input type="radio" name="indicator" value="off" /><span>Off</span></label>
+          </div>
+        </div>
+
+        <label class="row">
+          <span class="row-label">Middle click to mute</span>
+          <span class="switch">
+            <input type="checkbox" data-setting="middleClick" />
+            <span class="switch-track"></span>
+          </span>
+        </label>
+      </section>
+
+      <section class="section" aria-labelledby="quality-title">
+        <h2 class="section-title" id="quality-title">Quality</h2>
+
+        <label class="row">
+          <span class="row-text">
+            <span class="row-label">Auto quality</span>
+            <span class="row-hint">Uses the next lower quality when unavailable</span>
+          </span>
+          <span class="switch">
+            <input type="checkbox" data-setting="quality" />
+            <span class="switch-track"></span>
+          </span>
+        </label>
+
+        <div class="field" data-depends="quality">
+          <input class="slider" id="quality" type="range" min="0" step="1" aria-label="Preferred quality" />
+          <div class="ticks" id="quality-ticks"></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="sites-title">
+        <h2 class="section-title" id="sites-title">Sites</h2>
+
+        <label class="row">
+          <span class="row-label">YouTube Music</span>
+          <span class="switch">
+            <input type="checkbox" data-setting="music" />
+            <span class="switch-track"></span>
+          </span>
+        </label>
+
+        <label class="row">
+          <span class="row-label">Embedded players</span>
+          <span class="switch">
+            <input type="checkbox" data-setting="embeds" />
+            <span class="switch-track"></span>
+          </span>
+        </label>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="version"></span>
+      <a id="source" target="_blank" rel="noopener noreferrer" hidden>Source code</a>
+    </footer>
+
+    <script src="../defaults.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
