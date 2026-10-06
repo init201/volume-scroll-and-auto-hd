@@ -29,6 +29,9 @@ A lightweight browser extension for Firefox and all Chromium-based browsers, wit
 
 Scrolling over the video changes the volume. Scrolling beside it moves to the next Short as usual.
 
+![Volume boost above 100% shown in red](docs/2-boost-1280x800.png)
+![Settings popup with the preferred quality set to 4K](docs/3-quality-1280x800.png)
+
 ## Installation
 
 Download the latest ZIP from the [releases page](https://github.com/init201/volume-scroll-and-auto-hd/releases) or clone this repository.
