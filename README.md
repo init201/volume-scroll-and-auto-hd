@@ -102,12 +102,6 @@ The extension itself has no dependencies and no build step. The development comm
 
 `npm run check` finds browsers in their default install locations. Set `CHROME_PATH`, `EDGE_PATH` or `FIREFOX_PATH` to use another installation. Each browser runs headless and muted with a temporary profile that is deleted afterwards, so your own profiles are never touched.
 
-### Releasing a new version
-
-1. Raise `version` in `manifest.json`.
-2. Add the changes to [CHANGELOG.md](CHANGELOG.md).
-3. Run `npm run release` and upload the ZIP from the new `v<version>/` folder to both stores.
-
 ## Contributing
 
 Issues and pull requests are welcome. Edit the files, reload the extension and refresh YouTube. Please run `npm test` before opening a pull request.
