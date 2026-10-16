@@ -11,6 +11,7 @@
   const VOLUME_STORE_MS = 30 * 24 * 60 * 60 * 1000;
   const GAIN_SMOOTHING = 0.03;
   const QUIET_START = 0.5;
+  const PARK_DELAY_MS = 30000;
   const BOOST_COLOR = '#ff4d63';
   const QUALITY_RANK = new Map(
     ['tiny', 'small', 'medium', 'large', 'hd720', 'hd1080', 'hd1440', 'hd2160', 'hd2880', 'highres'].map(
@@ -118,7 +119,7 @@
 
   const wheel = { buffer: 0, timer: 0 };
   const pointer = { rightUsed: false };
-  const audio = { context: null, graphs: new WeakMap(), active: false };
+  const audio = { context: null, graphs: new WeakMap(), active: false, parked: false, parkTimer: 0 };
   const indicator = { parts: null, timer: 0 };
   const qualityApplied = new WeakMap();
   const qualityRetries = new WeakMap();
@@ -163,7 +164,10 @@
       }
       audio.context.addEventListener('statechange', onAudioStateChange);
     }
-    if (audio.context.state === 'suspended') audio.context.resume().catch(() => {});
+    if (audio.context.state !== 'running' && audio.context.state !== 'closed') {
+      audio.parked = false;
+      audio.context.resume().catch(() => {});
+    }
     return audio.context;
   };
 
@@ -190,14 +194,33 @@
     if (context?.state === 'running' && quiet) connectBoost(video);
   };
 
+  const capturedPlaying = () =>
+    players().some((player) => {
+      const video = videoOf(player);
+      return video && !video.paused && audio.graphs.has(video);
+    });
+
+  const parkAudio = () => {
+    if (audio.context?.state !== 'running' || capturedPlaying()) return;
+    audio.parked = true;
+    audio.context.suspend().catch(() => {});
+  };
+
+  const scheduleParking = () => {
+    clearTimeout(audio.parkTimer);
+    if (audio.context) audio.parkTimer = setTimeout(parkAudio, PARK_DELAY_MS);
+  };
+
   const onAudioStateChange = () => {
     const { state } = audio.context;
     if (state === 'running') {
+      audio.parked = false;
       for (const player of players()) {
         const video = videoOf(player);
         if (video) prepareBoost(video);
       }
-    } else if (state === 'suspended' && audio.active) {
+      if (!capturedPlaying()) scheduleParking();
+    } else if (state === 'suspended' && !audio.parked && capturedPlaying()) {
       audio.context.resume().catch(() => {});
     }
   };
@@ -452,10 +475,13 @@
         prepareBoost(video, true);
         break;
       case 'play':
-        prepareBoost(video, true);
+        clearTimeout(audio.parkTimer);
+        if (audio.graphs.has(video)) startAudio();
+        else prepareBoost(video, true);
         break;
       case 'pause':
         prepareBoost(video);
+        scheduleParking();
         break;
       case 'volumechange':
         if (player.getVolume() < 100) resetBoost(video);
@@ -466,7 +492,7 @@
   };
 
   const onUserGesture = () => {
-    if (boostAllowed() && audio.context?.state !== 'running' && players().length) startAudio();
+    if ((boostAllowed() || audio.active) && audio.context?.state !== 'running' && players().length) startAudio();
   };
 
   const onSettings = (event) => {
