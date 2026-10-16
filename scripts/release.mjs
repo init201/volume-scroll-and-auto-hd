@@ -80,10 +80,11 @@ const renderAssets = async () => {
         page,
       );
       await browser.send('Page.navigate', { url: `http://127.0.0.1:${port}/store/assets.html${search}` }, page);
-      await poll(
-        () => browser.evaluate(page, `location.search === ${JSON.stringify(search)} && document.body?.dataset.ready === 'true'`),
+      const status = await poll(
+        () => browser.evaluate(page, `location.search === ${JSON.stringify(search)} && document.body?.dataset.ready`),
         { message: `Timed out rendering ${asset.name}` },
       );
+      if (status !== 'true') throw new Error(`Rendering ${asset.name} failed (${status})`);
       const { data } = await browser.send(
         'Page.captureScreenshot',
         { format: 'png', clip: { x: 0, y: 0, width: asset.width, height: asset.height, scale: 1 } },
