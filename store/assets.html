@@ -546,13 +546,19 @@
         slot.replaceWith(player);
       };
 
+      const popupDocument = (frame) =>
+        new Promise((resolve) => {
+          const check = () => {
+            const popup = frame.contentDocument;
+            if (popup?.querySelectorAll('.tick').length) resolve(popup);
+            else requestAnimationFrame(check);
+          };
+          check();
+        });
+
       const preparePopup = async (frame) => {
         const manifest = await fetch('../manifest.json').then((response) => response.json());
-        await new Promise((resolve) => {
-          if (frame.contentDocument?.readyState === 'complete') resolve();
-          else frame.addEventListener('load', resolve, { once: true });
-        });
-        const popup = frame.contentDocument;
+        const popup = await popupDocument(frame);
         popup.querySelectorAll('.tick')[5].click();
         popup.getElementById('version').textContent = `v${manifest.version}`;
         const source = popup.getElementById('source');
@@ -574,7 +580,9 @@
         ready();
       };
 
-      show();
+      show().catch((error) => {
+        document.body.dataset.ready = `error: ${error.message}`;
+      });
     </script>
   </body>
 </html>
