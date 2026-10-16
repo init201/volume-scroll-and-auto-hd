@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Volume Scroll and Auto HD for YouTube",
   "short_name": "Volume Scroll and Auto HD",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Control YouTube volume with your mouse wheel and play every video in your preferred quality automatically.",
   "homepage_url": "https://github.com/init201/volume-scroll-and-auto-hd",
   "minimum_chrome_version": "111",

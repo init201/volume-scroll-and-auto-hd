@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-16
+
+### Fixed
+
+- With volume boost enabled, the audio pipeline no longer stays active while a video is paused. After 30 seconds of pause it rests, and it resumes instantly when playback continues. This releases the audio device like normal playback does, lets the computer sleep, and is intended to prevent playback errors after long pauses in Firefox.
+- A video that was routed through volume boost now always gets its audio back on playback, even if boost was switched off in the meantime.
+
 ## [1.0.0] - 2026-10-06
 
 ### Added
@@ -17,4 +24,5 @@ All notable changes to this project are documented here. The format follows [Kee
 - Settings popup with sync across devices.
 - Support for Firefox and Chromium-based browsers from a single code base.
 
+[1.0.1]: https://github.com/init201/volume-scroll-and-auto-hd/releases/tag/v1.0.1
 [1.0.0]: https://github.com/init201/volume-scroll-and-auto-hd/releases/tag/v1.0.0
